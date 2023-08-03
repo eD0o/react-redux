@@ -25,9 +25,9 @@ Or download the file directly:
 
 ## 1.1 - Store
 
-The Store in Redux is a single source of truth for the entire application's state. It is essentially *an object that holds the complete state tree of your application*. The state in the Store *represents the data* that drives your application's UI and determines how it behaves.
+The Store in Redux is a single source of truth for the entire application's state. It is essentially **an object that holds the complete state tree of your application**. The state in the Store **represents the data** that drives your application's UI and determines how it behaves.
 
-The *getState() method returns the current state* of the store.
+The **getState() method returns the current state** of the store.
 
 ```javascript
 function reducer() {
