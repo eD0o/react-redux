@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redux</title>
+  <script src="./redux.min.js"></script>
+</head>
+
+<body>
+  <script>
+
+    const INCREMENT = 'INCREMENT'
+    const SUM = 'SUM'
+
+    const initialState = 10
+
+    function reducer(state = initialState, action) {
+      if(action.type === SUM){
+        return state + action.payload
+      }
+
+      if(action.type === INCREMENT){
+        return state + 1
+      }
+
+      else{
+        return state
+      }
+    }
+
+    const store = Redux.createStore(reducer)
+
+    store.dispatch({type: SUM, payload: 25})
+    store.dispatch({type: INCREMENT})
+    
+    let state = store.getState()
+    console.log(state)
+  </script>
+</body>
+
+</html>

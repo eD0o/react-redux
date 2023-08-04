@@ -3,10 +3,13 @@
 We can install via NPM by yarn/npm, if you are using it with webpack/similar, or directly via the script link in a raw html/js project:
 
 > If you're coding a Vanilla JS project:
+
 ```javascript
   yarn add redux
 ```
+
 > If you're coding a React project:
+
 ```javascript
   yarn add redux react-redux
 ```
@@ -14,11 +17,12 @@ We can install via NPM by yarn/npm, if you are using it with webpack/similar, or
 In short, the "redux" package is the core state management library, while the "react-redux" package is a Redux extension for easier integration with React, making communication between Redux managed state and components React more convenient.
 
 Or download the file directly:
+
 > [redux.min.js](https://unpkg.com/redux@4.2.1/dist/redux.min.js)
 
 ```html
-  <script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
-  <script src="./pathtofile/redux.min.js"></script>
+<script src="https://unpkg.com/redux@4.2.1/dist/redux.min.js"></script>
+<script src="./pathtofile/redux.min.js"></script>
 ```
 
 # 1 - Fundamentals
@@ -29,30 +33,70 @@ The Store in Redux is a single source of truth for the entire application's stat
 
 The **getState() method returns the current state** of the store.
 
-<details>
-
-<summary>Example</summary>
-
-### Creating a store and consulting its value:
-
 ```javascript
 function reducer() {
   return {
-    name: 'Eduardo',
+    name: "Eduardo",
     id: 8,
   };
 }
 
 const store = Redux.createStore(reducer);
 const state = store.getState();
+console.log(state); // output -> same object as returned in reducer
 ```
 
 > The term/functon reducer will be explained later.
 
-</details>
-
 ## 1.2 - Action
 
-To update the state, we send an action through the store using the dispatch method. An action is always **an object that contains the type and a payload value if necessary**.
+To update the state, we send an action through the store using the dispatch method. An action is always **an object that contains the type and a possible payload value if necessary**.
 
-In the reducer we check the type of action sent and return the new state from that.
+In the reducer we **check the type of action sent and return the new state** from that.
+
+### 1.2.1 - Constants
+
+The action's type is always a string that identifies it. **As it is a string, the user may end up making a typing error**, thus introducing a BUG to the application.
+
+To avoid this problem, it is common to **create constants for the names of each action** that we have.
+
+### 1.2.2 - Action Creator
+
+One more common practice to facilitate the use of actions is to create **functions that return the action object**. These are called Action Creators.
+
+```javascript
+const initialState = 10;
+
+//constant
+const INCREMENT = "INCREMENT";
+
+//action creator
+function sum(payload) {
+  return { type: "SUM", payload };
+}
+
+function reducer(state = initialState, action) {
+  if (action.type === INCREMENT) {
+    return state + 1;
+  }
+
+  if (action.type === "SUM") {
+    return state + action.payload;
+  }
+
+  if (action.type === "decrement") {
+    return state - 1;
+  } else {
+    return state;
+  }
+}
+
+const store = Redux.createStore(reducer);
+
+store.dispatch(increment());
+store.dispatch(sum(25));
+store.dispatch({ type: "decrement" }); // -> ALWAYS AVOID THIS
+
+let state = store.getState();
+console.log(state); // output -> 36
+```
