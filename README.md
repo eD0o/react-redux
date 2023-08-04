@@ -100,3 +100,38 @@ store.dispatch({ type: "decrement" }); // -> ALWAYS AVOID THIS
 let state = store.getState();
 console.log(state); // output -> 36
 ```
+
+## 1.3 - Subscribe/Unsubscribe
+
+### 1.3.1 - Subscribe
+
+When the state is modified through an action, **it is necessary to render it again on the screen**.
+
+The store has a subscribe method that **will activate the function that is passed as its argument, every time an action is dispatched** via dispatch.
+
+It's usually **used with an external render function and activate that whenever the dispatch is triggered**.
+
+### 1.3.2 - Unsubscribe
+
+If, for some reason, you want **the function to stop being activated when a dispatch occurs**, you can use unsubscribe, which is the return from activating the subscribe method.
+
+```javascript
+function render() {
+  const state = store.getState();
+  const total = document.querySelector("#total");
+  total.innerText = state;
+}
+
+render();
+
+const unsubscribe = store.subscribe(render);
+unsubscribe(); // Not being triggered anymore because of the unsubscribe's declaration
+
+//It's valid to have multiple subscribes, and this one is working normally
+store.subscribe(() => {
+  console.log("Dispatch triggered and watched by the subscribe.");
+});
+
+const btn = document.querySelector("#btn");
+btn.addEventListener("click", () => store.dispatch(increment()));
+```

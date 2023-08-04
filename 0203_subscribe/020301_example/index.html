@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redux</title>
+  <script src="./redux.min.js"></script>
+</head>
+
+<body>
+
+  <div>
+    <h1>Total: <span id="total"></span></h1>
+    <button id="btn">INCREMENT</button>
+  </div>
+
+  <script>
+
+    function sum(payload) {
+      return { type: 'SUM', payload }
+    }
+
+    function increment() {
+      return { type: 'INCREMENT' }
+    }
+
+    const initialState = 0
+
+    function reducer(state = initialState, action) {
+      console.log(action)
+      if (action.type === 'SUM') {
+        return state + action.payload
+      }
+
+      if (action.type === 'INCREMENT') {
+        return state + 1
+      }
+
+      else {
+        return state
+      }
+    }
+
+    const store = Redux.createStore(reducer);
+
+    function render(){
+      const state = store.getState()
+      const total = document.querySelector("#total")
+      total.innerText = state;
+    }
+
+    render()
+
+    const unsubscribe = store.subscribe(render);
+    unsubscribe(); // Not being triggered anymore because of the unsubscribe
+
+    //It's valid to have multiple subscribes, and this one is working normally
+    store.subscribe(()=>{
+      console.log('Dispatch triggered and watched by the subscribe.')
+    })
+
+    const btn = document.querySelector("#btn")
+    btn.addEventListener('click', () => store.dispatch(increment()))
+  </script>
+</body>
+
+</html>
