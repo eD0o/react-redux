@@ -42,3 +42,9 @@ const state = store.getState();
 console.log(state.name);
 ```
 > The term/functon reducer will be explained later.
+
+## 1.2 - Action
+
+To update the state, we send an action through the store using the dispatch method. An action is always ==an object that contains the type and a payload value if necessary==.
+
+<span style="background-color: #FFFF00">In the reducer we check the type of action sent and return the new state from that.</span>
