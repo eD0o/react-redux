@@ -29,6 +29,12 @@ The Store in Redux is a single source of truth for the entire application's stat
 
 The **getState() method returns the current state** of the store.
 
+<details>
+
+<summary>Example</summary>
+
+### Creating a store and consulting its value:
+
 ```javascript
 function reducer() {
   return {
@@ -39,12 +45,14 @@ function reducer() {
 
 const store = Redux.createStore(reducer);
 const state = store.getState();
-console.log(state.name);
 ```
+
 > The term/functon reducer will be explained later.
+
+</details>
 
 ## 1.2 - Action
 
-To update the state, we send an action through the store using the dispatch method. An action is always ==an object that contains the type and a payload value if necessary==.
+To update the state, we send an action through the store using the dispatch method. An action is always **an object that contains the type and a payload value if necessary**.
 
-<span style="background-color: #FFFF00">In the reducer we check the type of action sent and return the new state from that.</span>
+In the reducer we check the type of action sent and return the new state from that.
