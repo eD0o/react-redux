@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redux</title>
+  <script src="./redux.min.js"></script>
+</head>
+
+<body>
+
+  <div>
+    <div id="box" style="background: blue; height: 200px; width: 50px;"></div>
+  </div>
+
+  <script>
+
+    function modifyWidth(payload) {
+      return { type: 'MODIFY_WIDTH', payload }
+    }
+
+    function reducer(state = 0, action) {
+      switch (action.type) {
+        case 'MODIFY_WIDTH':
+          return action.payload;
+        default:
+          return state;
+      }
+    }
+
+    const store = Redux.createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+
+    function render() {
+      const box = document.querySelector('#box');
+      box.style.width = store.getState() + 'px';
+    }
+
+    store.subscribe(render);
+    store.dispatch(modifyWidth(100))
+    store.dispatch(modifyWidth(20))
+    store.dispatch(modifyWidth(30))
+    store.dispatch(modifyWidth(50))
+
+    console.log(store.getState()) //output -> 50 and devtools working normally
+  </script>
+</body>
+
+</html>

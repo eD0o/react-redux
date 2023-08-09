@@ -1,4 +1,4 @@
-# 0 - Install Redux
+# 1 - Install Redux
 
 We can install via NPM by yarn/npm, if you are using it with webpack/similar, or directly via the script link in a raw html/js project:
 
@@ -25,9 +25,9 @@ Or download the file directly:
 <script src="./pathtofile/redux.min.js"></script>
 ```
 
-# 1 - Fundamentals
+# 2 - Fundamentals
 
-## 1.1 - Store
+## 2.1 - Store
 
 The Store in Redux is a single source of truth for the entire application's state. It is essentially **an object that holds the complete state tree of your application**. The state in the Store **represents the data** that drives your application's UI and determines how it behaves.
 
@@ -48,19 +48,19 @@ console.log(state); // output -> same object as returned in reducer
 
 > The term/functon reducer will be explained later.
 
-## 1.2 - Action
+## 2.2 - Action
 
 To update the state, we send an action through the store using the dispatch method. An action is always **an object that contains the type and a possible payload value if necessary**.
 
 In the reducer we **check the type of action sent and return the new state** from that.
 
-### 1.2.1 - Constants
+### 2.2.1 - Constants
 
 The action's type is always a string that identifies it. **As it is a string, the user may end up making a typing error**, thus introducing a BUG to the application.
 
 To avoid this problem, it is common to **create constants for the names of each action** that we have.
 
-### 1.2.2 - Action Creator
+### 2.2.2 - Action Creator
 
 One more common practice to facilitate the use of actions is to create **functions that return the action object**. These are called Action Creators.
 
@@ -101,9 +101,9 @@ let state = store.getState();
 console.log(state); // output -> 36
 ```
 
-## 1.3 - Subscribe/Unsubscribe
+## 2.3 - Subscribe/Unsubscribe
 
-### 1.3.1 - Subscribe
+### 2.3.1 - Subscribe
 
 When the state is modified through an action, **it is necessary to render it again on the screen**.
 
@@ -111,7 +111,7 @@ The store has a subscribe method that **will activate the function that is passe
 
 It's usually **used with an external render function and activate that whenever the dispatch is triggered**.
 
-### 1.3.2 - Unsubscribe
+### 2.3.2 - Unsubscribe
 
 If, for some reason, you want **the function to stop being activated when a dispatch occurs**, you can use unsubscribe, which is the return from activating the subscribe method.
 
@@ -136,9 +136,9 @@ const btn = document.querySelector("#btn");
 btn.addEventListener("click", () => store.dispatch(increment()));
 ```
 
-### 1.4 - Reducer
+### 2.4 - Reducer
 
-### 1.4.1 - Switch Case
+### 2.4.1 - Switch Case
 
 It is common to **use the switch statement inside the reducer instead of using if/else**. It serves only to **facilitate the reading and to avoid the repetition** of the action.type.
 
@@ -156,7 +156,7 @@ function reducer(state = 0, action) {
 const store = Redux.createStore(reducer);
 ```
 
-### 1.4.2 - combineReducers
+### 2.4.2 - combineReducers
 
 We can **split the reducer code into different functions and combine them at the end**. It is worth remembering that in the end **the reducer will always be unique and every action dispatched will pass through all reducers**.
 
@@ -208,6 +208,73 @@ function render() {
 render();
 store.subscribe(render);
 ```
+
 > [More details about this example:](https://github.com/eD0o/react-redux/blob/02_basics/0204_reducer/020402_example_combine_reducers/index.html)
 
 </details>
+
+## 2.5 - Pure Function
+
+**One of the most important rules** of Redux is to always use Pure Functions.
+
+Pure functions **always return the same value given the same argument and produce NO SIDE EFFECTS\*.**
+
+Returning the same value means that the function's internal calculations **cannot depend on random numbers, time, date and other data that might change** in the future.
+
+_\*Side effects are those that impact objects/elements that do not belong to the function. Example: fetch, setTimeout, manipulate dom, modify external objects/arrays and others._
+
+So, if it's necessary to change the component somehow, **don't do it inside the reducer/pure function, but change it in the component itself.**
+
+### 2.5.1 - Redux DevTools
+
+One of the main advantages of using Redux is the use of its **browser extension to debug state changes.**
+
+> [Install on Chrome:](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd?hl=en) / [Configure in store:](https://github.com/zalmoxisus/redux-devtools-extension)
+
+So if you have the extension installed, the next time you want to see the states better in redux, declare the store like below:
+
+```js
+const store = Redux.createStore(
+  reducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
+```
+
+Then, will be much easier to see the changes of the states:
+![](https://i.imgur.com/NG06VgX.png)
+
+One of the problems with side effects is that **they break devtool functionality like Time Travel**. Again, any side effect must be in the render/component.
+
+A correct example:
+```js
+function modifyWidth(payload) {
+  return { type: "MODIFY_WIDTH", payload };
+}
+
+function reducer(state = 0, action) {
+  switch (action.type) {
+    case "MODIFY_WIDTH":
+      return action.payload;
+    default:
+      return state;
+  }
+}
+
+const store = Redux.createStore(
+  reducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
+
+function render() {
+  const box = document.querySelector("#box");
+  box.style.width = store.getState() + "px";
+}
+
+store.subscribe(render);
+store.dispatch(modifyWidth(100));
+store.dispatch(modifyWidth(20));
+store.dispatch(modifyWidth(30));
+store.dispatch(modifyWidth(50));
+
+console.log(store.getState()); //output -> 50 and devtools working normally
+```
