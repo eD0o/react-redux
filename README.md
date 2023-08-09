@@ -4,13 +4,13 @@ We can install via NPM by yarn/npm, if you are using it with webpack/similar, or
 
 > If you're coding a Vanilla JS project:
 
-```javascript
+```js
   yarn add redux
 ```
 
 > If you're coding a React project:
 
-```javascript
+```js
   yarn add redux react-redux
 ```
 
@@ -33,7 +33,7 @@ The Store in Redux is a single source of truth for the entire application's stat
 
 The **getState() method returns the current state** of the store.
 
-```javascript
+```js
 function reducer() {
   return {
     name: "Eduardo",
@@ -64,7 +64,7 @@ To avoid this problem, it is common to **create constants for the names of each 
 
 One more common practice to facilitate the use of actions is to create **functions that return the action object**. These are called Action Creators.
 
-```javascript
+```js
 const initialState = 10;
 
 //constant
@@ -115,7 +115,7 @@ It's usually **used with an external render function and activate that whenever 
 
 If, for some reason, you want **the function to stop being activated when a dispatch occurs**, you can use unsubscribe, which is the return from activating the subscribe method.
 
-```javascript
+```js
 function render() {
   const state = store.getState();
   const total = document.querySelector("#total");
@@ -142,7 +142,7 @@ btn.addEventListener("click", () => store.dispatch(increment()));
 
 It is common to **use the switch statement inside the reducer instead of using if/else**. It serves only to **facilitate the reading and to avoid the repetition** of the action.type.
 
-```javascript
+```js
 function reducer(state = 0, action) {
   switch (action.type) {
     case "INCREMENT":
@@ -208,6 +208,6 @@ function render() {
 render();
 store.subscribe(render);
 ```
-> [More details about this example:]()
+> [More details about this example:](https://github.com/eD0o/react-redux/blob/02_basics/0204_reducer/020402_example_combine_reducers/index.html)
 
 </details>
