@@ -135,3 +135,79 @@ store.subscribe(() => {
 const btn = document.querySelector("#btn");
 btn.addEventListener("click", () => store.dispatch(increment()));
 ```
+
+### 1.4 - Reducer
+
+### 1.4.1 - Switch Case
+
+It is common to **use the switch statement inside the reducer instead of using if/else**. It serves only to **facilitate the reading and to avoid the repetition** of the action.type.
+
+```javascript
+function reducer(state = 0, action) {
+  switch (action.type) {
+    case "INCREMENT":
+      return state + 1;
+    case "DECREMENT":
+      return state - 1;
+    default: //It's important to keep a default clause to use as an "else".
+      return state;
+  }
+}
+const store = Redux.createStore(reducer);
+```
+
+### 1.4.2 - combineReducers
+
+We can **split the reducer code into different functions and combine them at the end**. It is worth remembering that in the end **the reducer will always be unique and every action dispatched will pass through all reducers**.
+
+In short, use Redux.combineReducers() **whenever your application has multiple chunks of state** handled by different reducers. This **helps maintain code organization and modularity as your application grows in complexity**.
+
+<details>
+  <summary>Example</summary>
+
+```js
+const initialState = 0;
+
+function counter(state = initialState, action) {
+  switch (action.type) {
+    case "SUM":
+      return state + action.payload;
+    case "INCREMENT":
+      return state + 1;
+    default:
+      return state;
+  }
+}
+
+function modal(state = true, action) {
+  switch (action.type) {
+    case "OPEN":
+      return true;
+    case "CLOSE":
+      return false;
+    default:
+      return state;
+  }
+}
+
+const reducer = Redux.combineReducers({ counter, modal });
+
+const store = Redux.createStore(reducer);
+
+function render() {
+  const { counter, modal } = store.getState();
+  const total = document.querySelector("#total");
+  total.innerText = counter; //It's important to iterate the state to the reducer you want to show, considering that now it's an object.
+  if (modal) {
+    total.style.display = "block";
+  } else {
+    total.style.display = "none";
+  }
+}
+
+render();
+store.subscribe(render);
+```
+> [More details about this example:]()
+
+</details>
