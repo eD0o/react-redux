@@ -385,4 +385,75 @@ const reducer = immer.produce((state, action) => {
 }, initalState);
 ```
 
-Without the immer, the same side effect issue with *state.name = action.payload;* would happen. So, if you want to avoid to desestructuring and write lots of spread operators, Immer is a great decision.
+Without the immer, the same side effect issue with _state.name = action.payload;_ would happen. So, if you want to avoid to desestructuring and write lots of spread operators, Immer is a great decision.
+
+## 2.7 - Organization (ducks)
+
+There are different ways to organize Redux files. In the course we will use one inspired by the **ducks pattern**, where we will keep the **actions and the related reducer in the same file**.
+
+store/configureStore.js: where we settle the store using the reducer
+
+```js
+import counter from "./counter.js";
+
+const reducer = Redux.combineReducers({ counter });
+
+const store = Redux.createStore(
+  reducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
+
+export default store;
+```
+
+store/counter.js: file where is the reducer function and its action types/creators 
+
+```js
+const INCREMENT = "counter/INCREMENT";
+const DECREMENT = "counter/DECREMENT";
+
+export const increment = () => ({ type: INCREMENT });
+export const decrement = () => ({ type: DECREMENT });
+
+const initialState = 0;
+
+const reducer = immer.produce((state, action) => {
+  switch (action.type) {
+    case INCREMENT:
+      state + 1;
+      break;
+  }
+}, initialState);
+
+export default reducer;
+```
+
+index.html: where we may import the files and use them with subscribe and dispatch.
+
+```html
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redux</title>
+    <script src="./redux.min.js"></script>
+    <script src="./immer.min.js"></script>
+  </head>
+
+  <body>
+    <div></div>
+
+    <script type="module">
+      import store from "./store/configureStore.js";
+      import { increment } from "./store/counter.js";
+
+      store.subscribe(() => {
+        console.log("it worked!");
+      });
+
+      store.dispatch(increment());
+    </script>
+  </body>
+</html>
+```
