@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redux</title>
+  <script src="./redux.min.js"></script>
+</head>
+
+<body>
+
+  <div>
+    <div id="box" style="background: blue; height: 200px; width: 50px;"></div>
+  </div>
+
+  <script>
+
+    const arr1 = [0, 1, 2, 3, 4];
+    const arr2 = [...arr1]; //Destructuring will copy the content of the array, but won't be equal.
+
+    console.log(arr2 === arr1) // Output -> false
+
+    const obj1 = {
+      name: 'Eduardo',
+      age: 23
+    }
+
+    //The === comparison compares memory references, not the internal contents of arrays. So even if the values are identical, the comparison will return false because the two arrays have different memory references.
+
+    //If you wanted to compare whether the contents of the arrays are equal, you would need to do a value-by-value comparison, looping through the arrays and comparing each element individually.
+
+    const obj2 = {...obj1} //The same will work for objects
+
+    const obj3 = Object.assign({}, obj1, {name:'Fulano'}) //creates a copy and can also modify in the same line
+
+
+    // Some methods that change the array:
+    array.concat();
+    array.filter();
+    array.map();
+    array.reduce();
+    array.flat();
+    array.join();
+
+    // Some methods that create a new array:
+    array.concat();
+    array.filter();
+    array.map();
+    array.reduce();
+    array.flat();
+    array.join();
+
+
+    const initalState = {
+      name: 'Eduardo',
+      age: 23
+    }
+
+    function modifyName(payload) {
+      return { type: 'MODIFY_NAME', payload }
+    }
+
+    function reducer(state = initalState, action) {
+      switch (action.type) {
+        case 'MODIFY_NAME':
+          //Doing this, you will create a spread operator to copy the object and just return the value (a new state), and not the state changed.
+          return { ...state, name: action.payload }
+        default:
+          return state;
+      }
+    }
+
+    const store = Redux.createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+
+    store.dispatch(modifyName('Rúbens'))
+    store.dispatch(modifyName('João'))
+    store.dispatch(modifyName('Matias'))
+
+  </script>
+</body>
+
+</html>

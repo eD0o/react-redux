@@ -246,6 +246,7 @@ Then, will be much easier to see the changes of the states:
 One of the problems with side effects is that **they break devtool functionality like Time Travel**. Again, any side effect must be in the render/component.
 
 A correct example:
+
 ```js
 function modifyWidth(payload) {
   return { type: "MODIFY_WIDTH", payload };
@@ -278,3 +279,110 @@ store.dispatch(modifyWidth(50));
 
 console.log(store.getState()); //output -> 50 and devtools working normally
 ```
+
+## 2.6 - Immutability
+
+The **reducer function must always return a new state when it is modified**. **Never modify the state directly** (it must be immutable). The concept of mutability mainly interferes with how we deal with objects and arrays.
+
+### 2.6.1 - Desestructuring
+
+```js
+function modifyName(payload) {
+  return { type: "MODIFY_NAME", payload };
+}
+
+function reducer(state = initalState, action) {
+  switch (action.type) {
+    case "MODIFY_NAME":
+      //Even being changed, Redux will identify the state as the same all the times.
+      //It's not recommended to change the state directly like that, you must create a new object.
+      state.name = action.payload; // -> WRONG
+      return state;
+
+      //Doing this, you will create a spread operator to copy the object and just return the value (a new state), and not the state changed.
+      return { ...state, name: action.payload }; // -> RIGHT
+    //Destructuring will copy the content of the array, but won't be equal.
+    //So even if the values are identical, the comparison in a if will return false because the two arrays have different memory references.
+    default:
+      return state;
+  }
+}
+
+const store = Redux.createStore(
+  reducer,
+  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+);
+
+store.dispatch(modifyName("Rúbens"));
+store.dispatch(modifyName("João"));
+store.dispatch(modifyName("Matias"));
+```
+
+### 2.6.2 - Arrays and their effects
+
+Also, here comes a list with **methods that can mutate or not an array/state**, so be careful to use some inside the reducer:
+
+```js
+// Some methods that change the array:
+array.copyWithin();
+array.fill();
+array.pop();
+array.push();
+array.reverse();
+array.shift();
+array.sort();
+array.splice();
+array.unshift();
+
+// Some methods that create a new array:
+array.concat();
+array.filter();
+array.map();
+array.reduce();
+array.flat();
+array.join();
+```
+
+### 2.6.3 - Immer
+
+Immer is a package that provides us with **a function, in which we can use all the methods that mutate arrays or objects, without worrying about the issue of immutability**. Because the function of the immer **will always produce a new object/array**.
+
+The same is **part of the Redux Toolkit package**, which is a package with several tools that will make it easier to write Redux code.
+
+```js
+const obj1 = {
+  name: "Eduardo",
+  age: 23,
+};
+
+const obj2 = immer.produce(obj1, (draft) => {
+  draft.age = 24;
+});
+
+console.log("obj1: ", obj1, "obj2: ", obj2); // output -> obj1:  {name: 'Eduardo', age: 23} obj2:  {name: 'Eduardo', age: 24}
+```
+
+- The first argument is the original object you want to modify(obj1).
+- The second argument is a function that receives the draft of this object and allows you to make the necessary modifications.
+
+The term "draft" refers to a **mutable copy of an immutable object**. In other words, it's a temporary object that you can make changes to as if you were mutating the original object, but behind the scenes, **Immer ensures that all changes are registered without actually modifying the original object**.
+
+### 2.6.4 - Immer and Reducer
+
+We can wrap the complete reducer function inside the Immer produce.
+
+- No default or return required
+- The break locks the switch statement
+- The initialState will be passed as second argument.
+
+```js
+const reducer = immer.produce((state, action) => {
+  switch (action.type) {
+    case "MODIFY_NAME":
+      state.name = action.payload;
+      break;
+  }
+}, initalState);
+```
+
+Without the immer, the same side effect issue with *state.name = action.payload;* would happen. So, if you want to avoid to desestructuring and write lots of spread operators, Immer is a great decision.

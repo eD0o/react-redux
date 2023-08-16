@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redux</title>
+  <script src="./redux.min.js"></script>
+</head>
+
+<body>
+
+  <div>
+    <div id="box" style="background: blue; height: 200px; width: 50px;"></div>
+  </div>
+
+  <script>
+
+    const initalState = {
+      name: 'Eduardo',
+      age: 23
+    }
+
+    function modifyName(payload) {
+      return { type: 'MODIFY_NAME', payload }
+    }
+
+    function reducer(state = initalState, action) {
+      switch (action.type) {
+        case 'MODIFY_NAME':
+
+          //Even being changed, Redux will identify the state as the same all the times.
+          //It's not recommended to change the state directly like that, you must create a new object.
+          state.name = action.payload;
+          return state;
+        default:
+          return state;
+      }
+    }
+
+    const store = Redux.createStore(reducer, window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__());
+    
+    store.dispatch(modifyName('Eduardo'))
+    store.dispatch(modifyName('João'))
+    store.dispatch(modifyName('Matias'))
+
+  </script>
+</body>
+
+</html>
