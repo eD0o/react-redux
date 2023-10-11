@@ -69,6 +69,7 @@ const store = Redux.createStore(reducer, enhancer);
 ```
 
 > Example:
+
 ```js
 //currying structure
 const logger = (store) => (next) => (action) => {
@@ -91,3 +92,68 @@ const { compose, applyMiddleware } = Redux;
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const enhancer = composeEnhancers(applyMiddleware(logger));
 ```
+
+## 3.2 - Redux Thunk
+
+Thunk comes from "Func", that is the abreviation from Function.
+
+It's possible and usually used by installing it by npm install redux-thunk, but we'll see how it usually works manually. 
+
+As said before, the reducer must be a **pure function, with no side effects. That's why we don't make http requests directly to it**.
+
+The function below works perfectly. But **it's not recommended** for two reasons: the first is because **it has a function that triggers actions that will modify the state**. By default, **only actions via dispatch should modify the state**. The second reason is the **need to always pass dispatch as its argument**.
+
+```js
+// wrong
+function reducer(state = null, action) {
+  switch (action.type) {
+    case "FETCH_DATA":
+      // fetch is a side effect
+      const data = fetch("https://dogsapi.origamid.dev/json/api/photo").then(
+        (r) => r.json()
+      );
+      // data is a Promise
+      return data;
+    default:
+      return state;
+  }
+}
+
+//it's always necessary to use store.dispatch, if you forget, you'll have an error.
+store.dispatch({ type: "FETCH_DATA" });
+```
+
+So, it's viable to **use a middleware to handle the obligation to always send objects via dispatch**. In the middleware **we can identify the action**, and check if it is a function. **If it is a function, we can activate it**.
+
+Thunk also avoids this -> Uncaught Error: Actions must be plain objects. Use custom middleware for async actions.
+
+```js
+const thunk = (store) => (next) => (action) => {
+  if(typeof action === 'function'){
+    return action(store.dispatch, store.getState)
+  }
+  console.log(action)
+  return next(action)
+}
+
+const { applyMiddleware, compose } = Redux;
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const enhancer = composeEnhancers(applyMiddleware(thunk));
+const store = Redux.createStore(reducer, enhancer)
+
+function fetchUrl( url) {
+  return async (dispatch) =>{
+    try {
+      dispatch({ type: 'FETCH_STARTED' })
+      const data = await fetch(url).then(r => r.json())
+      dispatch({ type: 'FETCH_SUCCESS', payload: data })
+      console.log(data)
+    } catch (error) {
+      dispatch({ type: 'FETCH_ERROR', payload: error.message })
+    }
+  }
+}
+
+store.dispatch(fetchUrl('https://dogsapi.origamid.dev/json/api/photo'))
+```
+
