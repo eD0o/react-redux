@@ -93,7 +93,7 @@ const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const enhancer = composeEnhancers(applyMiddleware(logger));
 ```
 
-## 3.2 - Redux Thunk
+## 3.3 - Redux Thunk
 
 Thunk comes from "Func", that is the abreviation from Function.
 
