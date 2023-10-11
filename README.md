@@ -97,7 +97,7 @@ const enhancer = composeEnhancers(applyMiddleware(logger));
 
 Thunk comes from "Func", that is the abreviation from Function.
 
-It's possible and usually used by installing it by npm install redux-thunk, but we'll see how it usually works manually. 
+It's possible and usually used by installing it by npm install redux-thunk, but we'll see how it usually works manually.
 
 As said before, the reducer must be a **pure function, with no side effects. That's why we don't make http requests directly to it**.
 
@@ -129,31 +129,105 @@ Thunk also avoids this -> Uncaught Error: Actions must be plain objects. Use cus
 
 ```js
 const thunk = (store) => (next) => (action) => {
-  if(typeof action === 'function'){
-    return action(store.dispatch, store.getState)
+  if (typeof action === "function") {
+    return action(store.dispatch, store.getState);
   }
-  console.log(action)
-  return next(action)
-}
+  console.log(action);
+  return next(action);
+};
 
 const { applyMiddleware, compose } = Redux;
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const enhancer = composeEnhancers(applyMiddleware(thunk));
+const store = Redux.createStore(reducer, enhancer);
+
+function fetchUrl(url) {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: "FETCH_STARTED" });
+      const data = await fetch(url).then((r) => r.json());
+      dispatch({ type: "FETCH_SUCCESS", payload: data });
+      console.log(data);
+    } catch (error) {
+      dispatch({ type: "FETCH_ERROR", payload: error.message });
+    }
+  };
+}
+
+store.dispatch(fetchUrl("https://dogsapi.origamid.dev/json/api/photo"));
+```
+
+## 3.4 - localStorage
+
+**Writing something to localStorage is a side-effect**, as is DOM manipulation. For this it's possible to create a middleware that will handle the situation.
+
+Simple example:
+
+```js
+const localStorage = (store) => (next) => (action) => {
+  const result = next(action);
+  if (action.localStorage !== undefined) {
+    console.log(action);
+    window.localStorage.setItem(
+      action.localStorage,
+      JSON.stringify(action.payload)
+    ); //JSON.stringify to store the array as a string
+  }
+  return result;
+};
+
+const localStorage = (store) => next => action => {
+  const result = next(action)
+  if (action.localStorage !== undefined) {
+    console.log(action)
+    window.localStorage.setItem(action.localStorage, JSON.stringify(action.payload)) //JSON.stringify to store the array as a string
+  }
+  return result
+}
+
+const { applyMiddleware, compose } = Redux;
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const enhancer = composeEnhancers(applyMiddleware(thunk, localStorage)); //Don't forget to use it in the composeEnhancers
 const store = Redux.createStore(reducer, enhancer)
 
-function fetchUrl( url) {
-  return async (dispatch) =>{
+function fetchUrl(url) {
+  return async (dispatch) => {
     try {
       dispatch({ type: 'FETCH_STARTED' })
       const data = await fetch(url).then(r => r.json())
-      dispatch({ type: 'FETCH_SUCCESS', payload: data })
+      dispatch({ type: 'FETCH_SUCCESS', payload: data, localStorage: 'data' }) //Also configuring it in the dispatch
       console.log(data)
     } catch (error) {
       dispatch({ type: 'FETCH_ERROR', payload: error.message })
     }
   }
 }
-
-store.dispatch(fetchUrl('https://dogsapi.origamid.dev/json/api/photo'))
 ```
 
+![](https://i.imgur.com/c2OsUry.png)
+
+
+But **to avoid JSON structure errors** and to always reinsert values on localStorage, you can do that: 
+
+```js
+function getLocalStorage(key, initial) {
+  try {
+    return JSON.parse(window.localStorage.getItem(key))
+  } catch (error) {
+    return initial;
+  }
+}
+
+const initialState = {
+  loading: false,
+  data: getLocalStorage('data', null),
+  error: null
+}
+
+//This part is just to avoid to refetch something that is already stored in the localStorage.
+const state = store.getState();
+
+if (state.data === null){
+  store.dispatch(fetchUrl('https://dogsapi.origamid.dev/json/api/photo'))
+}
+```
