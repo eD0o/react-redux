@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './App.jsx'
+import App from './App.js'
 import './global.scss'
 import {Provider} from 'react-redux'
 import {createStore} from 'redux'

@@ -59,3 +59,4 @@ const DisplayComponent = () => {
   return <p>Counter Value: {counter}</p>;
 };
 ```
+tenho que ver se com o npx normal dá pra copiar e colar deboa um exemplo novo, vai ser muito melhor
