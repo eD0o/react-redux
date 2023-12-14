@@ -60,3 +60,76 @@ const DisplayComponent = () => {
 };
 ```
 tenho que ver se com o npx normal dá pra copiar e colar deboa um exemplo novo, vai ser muito melhor
+
+## 4.2 - Connect
+
+React Redux is a library that provides a set of bindings between React and Redux. It **allows React components to interact with the Redux store and access or update the application state**.
+
+Installation:
+
+```js
+npm install redux react-redux
+```
+
+## 4.2.1 - mapStateToProps x mapDisptachToProps
+
+Before hooks, **we needed to connect** Redux to the component to use state/dispatch.
+
+The **difference between using connect or hooks is not just syntactical**. Currently, there is also a technical difference in the implementation of how Redux updates components based on state change and also state comparison.
+
+- **connect is generally used with class components**, while **hooks are more suitable for functional components**.
+
+= **connect allows for more detailed and fine-grained configuration with mapStateToProps and mapDispatchToProps**, while **hooks are more concise** and directly used in the body of the functional component.
+
+- Choosing between them often depends on personal preference and the team's coding style. Hooks have been a popular option since they were introduced in React, but the **choice can depend on the specific needs of the project and the team's history**.
+
+mapsStateToProps:
+
+```js
+import React from 'react';
+import { connect } from 'react-redux';
+
+const App = ({ counter }) => {
+   return (
+     <div>
+       <h1>Total: {counter}</h1>
+     </div>
+   );
+};
+
+const mapStateToProps = (state) => {
+   return { counter: state };
+};
+
+// Curried function, connect() returns a function that
+// must be used to pass the Component as an argument
+export default connect(mapStateToProps)(App);
+```
+
+mapDisptachToProps:
+
+```js
+//ActionCreator
+const increment = () => ({ type: 'INCREMENT' });
+
+// We don't need dispatch
+const App = ({ counter, increment }) => {
+   return (
+     <div>
+       <h1>Total: {counter}</h1>
+       <button onClick={increment}>Increment</button>
+     </div>
+   );
+};
+
+const mapStateToProps = (state) => {
+   return { counter: state };
+};
+
+// It's just an object with a list of action creators
+const mapDispatchToProps = {
+   increase,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
+```
