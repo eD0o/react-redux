@@ -355,24 +355,22 @@ batch: **Groups multiple dispatches of actions into a single state update**, whi
 To use custom ones:
 
 ```js
-import {
-  combineReducers,
-  configureStore,
-  getDefaultMiddleware,
-} from "@reduxjs/toolkit";
-import logger from "./middleware/logger";
-import counter from "./counter";
-import modal from "./modal";
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import logger from './middleware/logger';
+import counter from './counter';
+import modal from './modal';
 
 const reducer = combineReducers({ counter, modal });
 
 // There are middlewares already configured by default in the store to add a new one, we need to pull the ones that already exist and destructure them within an array.
-const middleware = [...getDefaultMiddleware(), logger];
+const middleware = (getDefaultMiddleware) => getDefaultMiddleware().concat(logger)
 
 const store = configureStore({ reducer, middleware });
 
 export default store;
 ```
+
+## 4.4 - Async
 
 (LATER:)
 
