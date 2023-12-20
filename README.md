@@ -355,15 +355,16 @@ batch: **Groups multiple dispatches of actions into a single state update**, whi
 To use custom ones:
 
 ```js
-import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import logger from './middleware/logger';
-import counter from './counter';
-import modal from './modal';
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import logger from "./middleware/logger";
+import counter from "./counter";
+import modal from "./modal";
 
 const reducer = combineReducers({ counter, modal });
 
 // There are middlewares already configured by default in the store to add a new one, we need to pull the ones that already exist and destructure them within an array.
-const middleware = (getDefaultMiddleware) => getDefaultMiddleware().concat(logger)
+const middleware = (getDefaultMiddleware) =>
+  getDefaultMiddleware().concat(logger);
 
 const store = configureStore({ reducer, middleware });
 
@@ -371,6 +372,67 @@ export default store;
 ```
 
 ## 4.4 - Async
+
+Redux **Thunk is already configured automatically through the Toolkit**. We can define the asynchronous action the **same way we defined it without React, outside the slice**.
+
+### 4.4.1 - Multiple Fetch
+
+The logic is the same for different requests, only modifying the arguments of the fetch function. But it's better to use __createAsyncSlice__ to handle many fetchs.
+
+```js
+// Login.js
+import { createSlice } from "@reduxjs/toolkit";
+
+const slice = createSlice({
+  name: "login",
+  initialState: {
+    loading: false,
+    data: null,
+    error: null,
+  },
+  reducers: {
+    fetchStarted(state) {
+      state.loading = true;
+    },
+    fetchSuccess(state, action) {
+      state.loading = false;
+      state.data = action.payload;
+      state.error = null;
+    },
+    fetchError(state, action) {
+      state.loading = false;
+      state.data = null;
+      state.error = action.payload;
+    },
+  },
+});
+
+const { fetchStarted, fetchSuccess, fetchError } = slice.actions;
+
+export const fetchToken = (user) => async (dispatch) => {
+  try {
+    dispatch(fetchStarted());
+    const response = await fetch(
+      "https://dogsapi.origamid.dev/json/jwt-auth/v1/token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      }
+    );
+    const data = await response.json();
+    return dispatch(fetchSuccess(data));
+  } catch (error) {
+    return dispatch(fetchError(error.message));
+  }
+};
+
+export default slice.reducer;
+```
+
+## 4.5 - createAsyncSlice
 
 (LATER:)
 
