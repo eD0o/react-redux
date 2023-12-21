@@ -377,7 +377,7 @@ Redux **Thunk is already configured automatically through the Toolkit**. We can 
 
 ### 4.4.1 - Multiple Fetch
 
-The logic is the same for different requests, only modifying the arguments of the fetch function. But it's better to use __createAsyncSlice__ to handle many fetchs.
+The logic is the same for different requests, only modifying the arguments of the fetch function. But it's better to use **createAsyncSlice** to handle many fetchs.
 
 ```js
 // Login.js
@@ -433,6 +433,102 @@ export default slice.reducer;
 ```
 
 ## 4.5 - createAsyncSlice
+
+Every time we identify a **pattern being repeated, there is an opportunity to optimize** the code through a function. (This function was created by the course author.)
+
+```js
+// import createSlice
+import { createSlice } from "@reduxjs/toolkit";
+
+/**
+ * Creates a slice with an asynchronous function (js docs)
+ * @param {Object} config
+ * @param {String} config.name
+ * @param {Object} config.initialState
+ * @param {Object} config.reducers
+ * @param {Function} config.fetchConfig
+ */
+const createAsyncSlice = (config) => {
+  // create a slice
+  const slice = createSlice({
+    // define a specific name for the slice
+    name: config.name,
+    // the initial state has specific properties
+    // but we can add new ones / write over existing ones
+    initialState: {
+      loading: false,
+      data: null,
+      error: null,
+      ...config.initialState,
+      // The spread operator (...) is used here to merge properties from the 'config.initialState' object into the 'initialState' object.
+      // Essentially, this operation combines the properties of two objects to create a new object that includes all properties from both sources.
+      // If 'config.initialState' has additional properties beyond 'loading', 'data', and 'error', those properties will also be included in the resulting object.
+      // This approach is a concise way to extend or override default properties while maintaining flexibility and modularity in the code.
+    },
+    // list of default reducers
+    reducers: {
+      fetchStarted(state) {
+        state.loading = true;
+      },
+      fetchSuccess(state, action) {
+        state.loading = false;
+        state.data = action.payload;
+        state.error = null;
+      },
+      fetchError(state, action) {
+        state.loading = false;
+        state.data = null;
+        state.error = action.payload;
+      },
+      // new reducers if necessary
+      ...config.reducers,
+    },
+  });
+
+  // destructuring of actions
+  const { fetchStarted, fetchSuccess, fetchError } = slice.actions;
+  // asynchronous action (thunk), receives a payload
+  const asyncAction = (payload) => async (dispatch) => {
+    try {
+      dispatch(fetchStarted());
+      // config.fetchConfig is a method that returns
+      // the fetch url and options
+      const { url, options } = config.fetchConfig(payload);
+      const response = await fetch(url, options);
+      const data = await response.json();
+      return dispatch(fetchSuccess(data));
+    } catch (error) {
+      return dispatch(fetchError(error.message));
+    }
+  };
+
+  // the function returns the slice properties and the asynchronous action
+  return { ...slice, asyncAction };
+};
+
+export default createAsyncSlice;
+```
+
+## 4.5.1 - JSDoc
+
+JSDoc is a standard for adding **documentation annotations to JavaScript** code, allowing you to describe the **purpose, parameters, return types**, and other information about functions and methods.
+
+Annotations start with _/** and end with */. Within this block, you **can add tags like @param to describe parameters, @return to describe the return value, and other specific** tags to document different aspects of the code.
+
+It also helps a lot to write code because of the IDE autocomplete. 
+
+```js
+/**
+ * @param {Object} config
+ * @param {String} config.name
+ * @param {Object} config.initialState
+ * @param {Object} config.reducers
+ * @param {Function} config.fetchConfig
+ */
+const createAsyncSlice = (config) => {
+  ...
+}
+```
 
 (LATER:)
 
