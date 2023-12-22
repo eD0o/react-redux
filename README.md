@@ -509,13 +509,13 @@ const createAsyncSlice = (config) => {
 export default createAsyncSlice;
 ```
 
-## 4.5.1 - JSDoc
+### 4.5.1 - JSDoc
 
 JSDoc is a standard for adding **documentation annotations to JavaScript** code, allowing you to describe the **purpose, parameters, return types**, and other information about functions and methods.
 
-Annotations start with _/** and end with */. Within this block, you **can add tags like @param to describe parameters, @return to describe the return value, and other specific** tags to document different aspects of the code.
+Annotations start with \_/** and end with \*/. Within this block, you **can add tags like @param to describe parameters, @return to describe the return value, and other specific\*\* tags to document different aspects of the code.
 
-It also helps a lot to write code because of the IDE autocomplete. 
+It also helps a lot to write code because of the IDE autocomplete.
 
 ```js
 /**
@@ -528,6 +528,32 @@ It also helps a lot to write code because of the IDE autocomplete.
 const createAsyncSlice = (config) => {
   ...
 }
+```
+
+## 4.6 - Prepare
+
+In createSlice, **it's possible to divide the reducer into 2 methods, reducer and prepare**. Prepare **is used to prepare the object created by the action**. It is **only possible to return {payload, meta, error}** properties.
+
+Allows you to normalize data preparation logic and **keep the action creator simple and straightforward**. In other words, it **helps encapsulate logic that is not purely related to reducer** logic.
+
+```js
+import { createSlice } from "@reduxjs/toolkit";
+
+const slice = createSlice({
+  name: "counter",
+  initialState: 0,
+  reducers: {
+    increment: (state) => state + 1,
+    decrement: (state) => state - 1,
+    sum: {
+      reducer: (state, action) => state + action.payload,
+      prepare: (payload) => ({ payload, meta: "local" }),
+    },
+  },
+});
+
+export const { increment, decrement, sum } = slice.actions;
+export default slice.reducer;
 ```
 
 (LATER:)
