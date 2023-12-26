@@ -560,3 +560,35 @@ export default slice.reducer;
 
 - CREATE A BOILERPLATE
 - DO PREVIOUS CHALLENGES
+
+## 4.7 - localStorage
+
+Another function from the course author that the value verified at this time must now be within the **meta** property.
+
+```js
+// localStorage.js
+const localStorage = (store) => (next) => (action) => {
+  const response = next(action);
+  const { meta } = action;
+  if (meta && meta.localStorage) {
+    const { key, value } = meta.localStorage;
+    window.localStorage.setItem(key, JSON.stringify(value));
+  }
+  return response;
+};
+
+export default localStorage;
+```
+
+```js
+// getLocalStorage.js
+function getLocalStorage(key, initial) {
+  try {
+    return JSON.parse(window.localStorage.getItem(key));
+  } catch {
+    return initial;
+  }
+}
+
+export default getLocalStorage;
+```
