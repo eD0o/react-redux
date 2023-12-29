@@ -10,3 +10,5 @@
 
 - Avoid placing local states that change frequently (Form status, screen size, scroll position, etc).
 
+## 5.2 - Forms
+
