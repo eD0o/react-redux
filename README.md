@@ -67,3 +67,6 @@ const Photos = () => {
 
 export default Photos;
 ```
+## 5.5 - Filters
+
+Using selectors, we can **filter the data in our store without modifying** the initial values.

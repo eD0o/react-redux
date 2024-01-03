@@ -1,7 +1,7 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
-import photos from './photos';
+import products from './products';
 
-const reducer = combineReducers({photos});
+const reducer = combineReducers({ products });
 const store = configureStore({ reducer });
 
 export default store;
