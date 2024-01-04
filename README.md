@@ -70,3 +70,5 @@ export default Photos;
 ## 5.5 - Filters
 
 Using selectors, we can **filter the data in our store without modifying** the initial values.
+
+Check the 050502_example_part2 to see more details.
