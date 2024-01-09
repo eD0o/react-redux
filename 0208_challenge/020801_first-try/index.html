@@ -15,33 +15,31 @@
   <h1 id="student"></h1>
 
   <script type="module">
-
     import store from './store/configureStore.js';
+    import { incrementTime, decrementTime, changeEmail } from './store/student.js';
+    import { completeClass, completeCourse, resetCourse } from './store/classes.js';
 
-    const student = {
-      name: 'Eduardo Vinícius',
-      email: 'eduardo.benigno15@gmail.com',
-      remainingDays: 120
+    function render() {
+      const { classes, student } = store.getState();
+      const studentEl = document.querySelector("#student")
+      const classesEl = document.querySelector("#classes")
+
+      studentEl.innerText = `${student.name} : ${student.email} : ${student.remainingDays}`
+      classesEl.innerText = classes.filter((classes) => classes.complete === true).length
     }
 
-    const classes = [
-      {
-        id: 1,
-        name: "Typescript",
-        complete: false
-      },
-      {
-        id: 2,
-        name: "React",
-        complete: false
-      },
-      {
-        id: 3,
-        name: "Redux",
-        complete: false
-      },
-    ]
+    render()
+    store.subscribe(render);
 
+    store.dispatch(incrementTime())
+    store.dispatch(incrementTime())
+    store.dispatch(decrementTime())
+    store.dispatch(changeEmail('edu@gmail.com'))
+    store.dispatch(completeCourse())
+    store.dispatch(resetCourse())
+    store.dispatch(completeClass(2))
+
+    console.log(store.getState());
   </script>
 </body>
 
