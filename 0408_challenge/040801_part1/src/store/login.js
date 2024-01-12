@@ -10,6 +10,9 @@ const token = createAsyncSlice({
     }
   },
   reducers: {
+    removeToken(state) {
+      state.data = null
+    },
     fetchSuccess: {
       reducer(state, action) {
         state.loading = false;
@@ -43,6 +46,11 @@ const token = createAsyncSlice({
 
 const user = createAsyncSlice({
   name: 'user',
+  reducers: {
+    removeUser(state) {
+      state.data = null;
+    },
+  },
   initialState: {
     error: 'a'
   },
@@ -62,6 +70,9 @@ const reducer = combineReducers({ token: token.reducer, user: user.reducer })
 const fetchToken = token.asyncAction
 const fetchUser = user.asyncAction
 
+const { removeToken } = token.actions;
+const { removeUser } = user.actions;
+
 export default reducer
 
 export const login = (user) => async (dispatch) => {
@@ -77,5 +88,11 @@ export const login = (user) => async (dispatch) => {
 export const autoLogin = () => async (dispatch, getState) => {
   const state = getState()
   const { token } = state.login.token.data
-  if(token) await dispatch(fetchUser(token))
+  if (token) await dispatch(fetchUser(token))
+}
+
+export const userLogout = () => (dispatch) => {
+  dispatch(removeUser());
+  dispatch(removeToken());
+  window.localStorage.removeItem('token');
 }
