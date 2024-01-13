@@ -1,0 +1,32 @@
+.form{
+  &Label,
+  &Input,
+  &Button{
+    font-family: 'Roboto';
+  }
+
+  &Label{
+    display: block;
+    margin-bottom: .25rem;
+  }
+
+  &Input{
+    border: 1px solid;
+    border-radius: .25rem;
+    width: 100%;
+    padding: .25rem;
+    box-sizing: border-box;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+
+  &Button{
+    color: #fff;
+    background: #000;
+    border: none;
+    padding: .75rem 2rem;
+    margin-top: .5rem;
+    border-radius: .25rem;
+    cursor: pointer;
+  }
+}
