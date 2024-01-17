@@ -1,10 +1,9 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import photo from './photo';
 
-const counter = () => 0
+// const middleware = (getDefaultMiddleware) => getDefaultMiddleware()
 
-const middleware = (getDefaultMiddleware) => getDefaultMiddleware()
-
-const reducer = combineReducers({ counter })
-const store = configureStore({ reducer, middleware })
+const reducer = combineReducers({ photo })
+const store = configureStore({ reducer })
 
 export default store;
