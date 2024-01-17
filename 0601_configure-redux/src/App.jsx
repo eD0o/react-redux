@@ -1,5 +1,5 @@
 import React from 'react';
-import './App.scss';
+import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Header from './Components/Header';
 import Footer from './Components/Footer';
@@ -22,7 +22,14 @@ function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="login/*" element={<Login />} />
-              <ProtectedRoute path="conta/*" element={<User />} />
+              <Route
+                path="conta/*"
+                element={
+                  <ProtectedRoute>
+                    <User />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="foto/:id" element={<Photo />} />
               <Route path="perfil/:user" element={<UserProfile />} />
               <Route path="*" element={<NotFound />} />

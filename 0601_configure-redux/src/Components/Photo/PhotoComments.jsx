@@ -1,7 +1,7 @@
 import React from 'react';
 import { UserContext } from '../../UserContext';
 import PhotoCommentsForm from './PhotoCommentsForm';
-import styles from './PhotoComments.module.scss';
+import styles from './PhotoComments.module.css';
 
 const PhotoComments = (props) => {
   const [comments, setComments] = React.useState(() => props.comments);

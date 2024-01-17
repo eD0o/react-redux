@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './UserPhotoPost.module.scss';
+import styles from './UserPhotoPost.module.css';
 import useForm from '../../Hooks/useForm';
 import useFetch from '../../Hooks/useFetch';
 import Input from '../Forms/Input';

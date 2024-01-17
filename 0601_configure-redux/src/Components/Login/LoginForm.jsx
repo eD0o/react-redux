@@ -5,8 +5,8 @@ import Button from '../Forms/Button';
 import useForm from '../../Hooks/useForm';
 import { UserContext } from '../../UserContext';
 import Error from '../Helper/Error';
-import styles from './LoginForm.module.scss';
-import stylesBtn from '../Forms/Button.module.scss';
+import styles from './LoginForm.module.css';
+import stylesBtn from '../Forms/Button.module.css';
 import Head from '../Helper/Head';
 
 const LoginForm = () => {

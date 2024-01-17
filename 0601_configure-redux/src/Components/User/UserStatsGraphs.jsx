@@ -1,5 +1,5 @@
 import React from 'react';
-import styles from './UserStatsGraphs.module.scss';
+import styles from './UserStatsGraphs.module.css';
 import { VictoryPie, VictoryChart, VictoryBar } from 'victory';
 
 const UserStatsGraphs = ({ data }) => {
@@ -7,19 +7,17 @@ const UserStatsGraphs = ({ data }) => {
   const [total, setTotal] = React.useState(0);
 
   React.useEffect(() => {
-    if (data.length) {
-      const graphData = data.map((item) => {
-        return {
-          x: item.title,
-          y: Number(item.acessos),
-        };
-      });
+    const graphData = data.map((item) => {
+      return {
+        x: item.title,
+        y: Number(item.acessos),
+      };
+    });
 
-      setTotal(
-        data.map(({ acessos }) => Number(acessos)).reduce((a, b) => a + b),
-      );
-      setGraph(graphData);
-    }
+    setTotal(
+      data.map(({ acessos }) => Number(acessos)).reduce((a, b) => a + b, 0),
+    );
+    setGraph(graphData);
   }, [data]);
 
   return (
