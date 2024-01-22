@@ -1,5 +1,5 @@
 import React from 'react';
-import Enviar from '../../Assets/enviar.svg?react';
+import Enviar from '../../assets/enviar.svg?react';
 import useFetch from '../../Hooks/useFetch';
 import Error from '../Helper/Error';
 import { COMMENT_POST } from '../../Api';
