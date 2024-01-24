@@ -1,20 +1,20 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 const slice = createSlice({
   name: 'ui',
   initialState: {
-    modal: false
+    modal: false,
   },
   reducers: {
     openModal(state) {
-      state.modal = true
+      state.modal = true;
     },
     closeModal(state) {
-      state.modal = false
-    }
-  }
-})
+      state.modal = false;
+    },
+  },
+});
 
-export const { openModal, closeModal } = slice.actions
+export const { openModal, closeModal } = slice.actions;
 
 export default slice.reducer;
